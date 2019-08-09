@@ -1,0 +1,15 @@
+
+
+# Alertmanager告警提示
+告警内容： **{{ alert_name }}**
+[来源URL]({{ external_url }})
+
+{% for msg in alert_messages %}
+**Labels**
+{% for key, value in msg.labels.items() %}
+> {{key}} = {{value}}{% endfor %}
+
+**Annotations**
+> message = msg.annotations_message
+{% endfor %}
+

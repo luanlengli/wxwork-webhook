@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+
+from flask import (
+    Blueprint,
+    request,
+    abort,
+)
+import requests, json
+
+from utils.get_opt import get_args
+from utils.tools import alertmanager_data_transformer
+
+main = Blueprint('webhook', __name__)
+
+
+def wxwork_webhook(json_data, command_args):
+    print("webhook post data = {}".format(json_data))
+    text_data = dict(
+        content=str(json_data),
+    )
+    context_data = dict(
+        msgtype="markdown",
+        markdown=text_data,
+    )
+    webhook_url = command_args['weixin_webhook']
+    response = requests.post(
+        webhook_url,
+        data=json.dumps(context_data),
+        headers={'Content-Type': 'application/json'}
+    )
+    if response.status_code != 200:
+        raise ValueError(
+            'Request to slack returned an error %s, the response is:\n%s'
+            % (response.status_code, response.text)
+        )
+
+
+@main.route('/webhook', methods=['POST'])
+def webhook():
+    json_data=request.json
+    print("alertmanager data = {}".format(json_data))
+    command_args = get_args()
+    print("webhook command_args {}".format(command_args))
+    if request.method == 'POST':
+        formatted_data = alertmanager_data_transformer(json_data)
+        wxwork_webhook(json_data=formatted_data, command_args=command_args)
+        return '', 200
+    else:
+        abort(400)
