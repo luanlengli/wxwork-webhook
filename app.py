@@ -24,8 +24,9 @@ def configured_app(command_args):
 
 if __name__ == '__main__':
     command_args = get_args()
+    print("command_args = {}".format(command_args))
     config = dict(
-        debug=True,
+        debug=False,
         host=command_args['address'],
         port=command_args['port'],
         threaded=True,

@@ -7,14 +7,14 @@ def get_args():
     parser = argparse.ArgumentParser(description='A Simple Alertmanager Webhook For Wechat Enterprise!')
 
     parser.add_argument(
-        '--weixin-webhook',
+        '--wxwork-webhook',
         action='store',
         metavar='https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxxxxx',
         type=str,
         nargs='?',
         const='None',
         required=True,
-        help='weixin webhook url',
+        help='wxwork webhook url',
     )
 
     parser.add_argument(

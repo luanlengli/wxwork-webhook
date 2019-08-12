@@ -1,3 +1,10 @@
+.git
+Dockerfile
+.DS_Store
+.gitignore
+README.md
+env.*
+__pycache__
 *.py[cod]
 *.so
 *.egg
@@ -9,4 +16,3 @@ build
 .DS_Store
 __pycache__
 venv
-.git

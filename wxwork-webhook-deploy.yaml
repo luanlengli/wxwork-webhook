@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wxwork-webhook
+spec:
+  selector:
+    app: wxwork-webhook
+  ports:
+    - protocol: TCP
+      port: 5233
+      targetPort: 5233
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: wxwork-webhook
+spec:
+  template:
+    metadata:
+      labels:
+        app: wxwork-webhook
+    spec:
+      containers:
+      - image: luanlengli/wxwork-webhook:v0.1
+        name: wxwork-webhook
+        ports:
+        - containerPort: 5233

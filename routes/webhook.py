@@ -23,7 +23,7 @@ def wxwork_webhook(json_data, command_args):
         msgtype="markdown",
         markdown=text_data,
     )
-    webhook_url = command_args['weixin_webhook']
+    webhook_url = command_args['wxwork_webhook']
     response = requests.post(
         webhook_url,
         data=json.dumps(context_data),
