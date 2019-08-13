@@ -1,8 +1,9 @@
 *.egg
 *.egg-info
-*.py[cod]
-*.so
 *.ini
+*.py[cod]
+
+*.so
 *.yaml
 *.yml
 .DS_Store
@@ -15,6 +16,7 @@ README.md
 __pycache__
 __pycache__
 build
+demo.png
 dist
 env.*
 venv

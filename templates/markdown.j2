@@ -1,16 +1,13 @@
-# Alertmanager告警提示
-告警标题： **{{ alert_name }}**
-[来源URL]({{ external_url }})
-
+**==== {{ alert_name }} ====**
+告警类型【{{ alert_status }}】数量【{{ alert_num }}】
+[在Alertmanager里查看此告警]({{ external_url }})
 {% for msg in alert_messages %}
-## 告警
-### Labels
+**==== Labels ====**
 {% for key, value in msg.labels.items() %}
-> **{{key}}：** `{{value}}` {% endfor %}
-
-### Annotations
-> **信息：** {{msg.annotations.message}}
-> **开始时间：** {{ msg.startsAt }}
-> **结束时间：** {{ msg.startsAt }}
-
+{{key}} = {{value}} {% endfor %}
+**==== Annotations ====**
+{% for key, value in msg.annotations.items() %}
+{{key}} = {{value}}{% endfor %}
+startsAt = {{ msg.startsAt }}
+endsAt = {{ msg.endsAt }}
 {% endfor %}

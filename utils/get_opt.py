@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-import argparse
+from argparse import ArgumentParser
 
 def get_args():
-    parser = argparse.ArgumentParser(description='A Simple Alertmanager Webhook For Wechat Enterprise!')
+    parser = ArgumentParser(description='A Simple Alertmanager Webhook For Wechat Enterprise!')
 
     parser.add_argument(
         '-w',
