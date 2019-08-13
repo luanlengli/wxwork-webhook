@@ -6,12 +6,14 @@ from flask import (
 )
 
 from routes.webhook import main as webhook
+from routes.healthz import main as healthz
 from utils.get_opt import get_args
 
 
 def register_routes(app):
     # 注册路由
     app.register_blueprint(webhook)
+    app.register_blueprint(healthz)
     return app
 
 

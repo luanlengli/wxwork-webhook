@@ -15,10 +15,13 @@ main = Blueprint('webhook', __name__)
 
 
 def wxwork_webhook(markdown_data, command_args):
-    context_data = dict(
-        msgtype="markdown",
-        markdown=markdown_data,
-    )
+    context_data = {
+        "msgtype": "markdown",
+        "markdown": {
+            "content": markdown_data
+        }
+    }
+
     print("context_data = {}".format(context_data))
     webhook_url = command_args['wxwork_webhook']
     response = requests.post(
@@ -30,7 +33,7 @@ def wxwork_webhook(markdown_data, command_args):
     )
     if response.status_code != 200:
         raise ValueError(
-            'Request to slack returned an error %s, the response is:\n%s'
+            'Request to wxwork returned an error %s, the response is:\n%s'
             % (response.status_code, response.text)
         )
 

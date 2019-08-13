@@ -2,7 +2,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: wxwork-webhook
-  namespace: default
 spec:
   selector:
     app: wxwork-webhook
@@ -16,14 +15,22 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: wxwork-webhook
-  namespace: default
 spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: wxwork-webhook
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       labels:
         app: wxwork-webhook
     spec:
-      replicas: 1
       automountServiceAccountToken: false
       affinity:
         podAntiAffinity:
@@ -40,6 +47,7 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
+      dnsPolicy: ClusterFirst
       initContainers:
       - name: wait-internet
         image: busybox:1.26
@@ -61,16 +69,17 @@ spec:
         imagePullPolicy: IfNotPresent
         resources:
           limits:
-            cpu: 20m
+            cpu: 200m
             memory: 100Mi
           requests:
             cpu: 10m
             memory: 20Mi
         ports:
         - containerPort: 5233
+        workingDir: /usr/local/wxwork-webhook/
         command:
         - "python"
-        - "/usr/local/wxwork-webhook/app.py"
+        - "app.py"
         - "--wxwork-webhook"
         - "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxxxxx"
         - "--port"
