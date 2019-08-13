@@ -9,25 +9,24 @@ from flask import (
 import requests, json
 
 from utils.get_opt import get_args
-from utils.tools import alertmanager_data_transformer
+from utils.tools import json_to_markdown
 
 main = Blueprint('webhook', __name__)
 
 
-def wxwork_webhook(json_data, command_args):
-    print("webhook post data = {}".format(json_data))
-    text_data = dict(
-        content=str(json_data),
-    )
+def wxwork_webhook(markdown_data, command_args):
     context_data = dict(
         msgtype="markdown",
-        markdown=text_data,
+        markdown=markdown_data,
     )
+    print("context_data = {}".format(context_data))
     webhook_url = command_args['wxwork_webhook']
     response = requests.post(
         webhook_url,
         data=json.dumps(context_data),
-        headers={'Content-Type': 'application/json'}
+        headers={
+            'Content-Type': 'application/json'
+        }
     )
     if response.status_code != 200:
         raise ValueError(
@@ -41,10 +40,11 @@ def webhook():
     json_data=request.json
     print("alertmanager data = {}".format(json_data))
     command_args = get_args()
-    print("webhook command_args {}".format(command_args))
+    # print("webhook command_args {}".format(command_args))
     if request.method == 'POST':
-        formatted_data = alertmanager_data_transformer(json_data)
-        wxwork_webhook(json_data=formatted_data, command_args=command_args)
+        markdown_data = json_to_markdown(json_data)
+        print("webhook markdown data = {}".format(markdown_data))
+        wxwork_webhook(markdown_data=markdown_data, command_args=command_args)
         return '', 200
     else:
         abort(400)

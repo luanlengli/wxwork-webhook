@@ -9,27 +9,29 @@ from routes.webhook import main as webhook
 from utils.get_opt import get_args
 
 
-def register_routes(app, command_args):
+def register_routes(app):
     # 注册路由
     app.register_blueprint(webhook)
     return app
 
 
-def configured_app(command_args):
+def configured_app():
     # 初始化app
     app = Flask(__name__)
-    app = register_routes(app, command_args)
+    app = register_routes(app)
     return app
 
-
-if __name__ == '__main__':
+def run():
     command_args = get_args()
     print("command_args = {}".format(command_args))
     config = dict(
         debug=False,
-        host=command_args['address'],
+        host=command_args['listen'],
         port=command_args['port'],
         threaded=True,
     )
-    app = configured_app(command_args)
+    app = configured_app()
     app.run(**config)
+
+if __name__ == '__main__':
+    run()

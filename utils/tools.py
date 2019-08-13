@@ -5,18 +5,21 @@ from flask import (
     render_template
 )
 
-def alertmanager_data_transformer(json_data):
-    alerts_num=len(json_data["alerts"])
-    alert_name=json_data["groupLabels"]["alertname"]
-    externalURL=json_data["externalURL"]
-    alert_messages=[]
+
+def json_to_markdown(json_data):
+    alerts_num = len(json_data["alerts"])
+    alert_name = json_data["groupLabels"]["alertname"]
+    externalURL = json_data["externalURL"]
+    alert_reciever = json_data["receiver"]
+    externalURL = "{}#/alerts?receiver={}".format(externalURL, alert_reciever)
+    alert_messages = []
     for i in range(alerts_num):
-        message=dict(
+        message = dict(
             labels=json_data["alerts"][i]["labels"],
-            annotations_message = json_data["alerts"][i]["annotations"]["message"],
-            source_url = json_data["alerts"][i]["generatorURL"],
-            startsAt = json_data["alerts"][i]["startsAt"],
-            endsAt = json_data["alerts"][i]["startsAt"],
+            annotations=json_data["alerts"][i]["annotations"],
+            generatorURL=json_data["alerts"][i]["generatorURL"],
+            startsAt=json_data["alerts"][i]["startsAt"],
+            endsAt=json_data["alerts"][i]["startsAt"],
         )
         alert_messages.append(message)
     return render_template(
@@ -25,5 +28,3 @@ def alertmanager_data_transformer(json_data):
         external_url=externalURL,
         alert_messages=alert_messages,
     )
-
-

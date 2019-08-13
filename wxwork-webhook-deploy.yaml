@@ -2,11 +2,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: wxwork-webhook
+  namespace: default
 spec:
   selector:
     app: wxwork-webhook
   ports:
-    - protocol: TCP
+    - name: test-webhook
+      protocol: TCP
       port: 5233
       targetPort: 5233
 ---
@@ -14,14 +16,70 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: wxwork-webhook
+  namespace: default
 spec:
   template:
     metadata:
       labels:
         app: wxwork-webhook
     spec:
+      replicas: 1
+      automountServiceAccountToken: false
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - wxwork-webhook
+            weight: 100
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+      initContainers:
+      - name: wait-internet
+        image: busybox:1.26
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 10m
+            memory: 20Mi
+          requests:
+            cpu: 10m
+            memory: 20Mi
+        command:
+        - "/bin/sh"
+        - "-c"
+        - "until nc -zv www.baidu.com 80 -w1; do echo 'waiting for access Internet'; sleep 1; done"
       containers:
-      - image: luanlengli/wxwork-webhook:v0.1
-        name: wxwork-webhook
+      - name: wxwork-webhook1
+        image: luanlengli/wxwork-webhook:v0.1
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 20m
+            memory: 100Mi
+          requests:
+            cpu: 10m
+            memory: 20Mi
         ports:
         - containerPort: 5233
+        command:
+        - "python"
+        - "/usr/local/wxwork-webhook/app.py"
+        - "--wxwork-webhook"
+        - "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxxxxx"
+        - "--port"
+        - "5233"
+        volumeMounts:
+        - name: timezone-volume
+          mountPath: /etc/localtime
+          readOnly: true
+      volumes:
+      - name: timezone-volume
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Shanghai
