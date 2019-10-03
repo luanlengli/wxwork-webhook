@@ -13,7 +13,10 @@ docker build -t IMAGE_NAME:TAG .
 docker run -d \
            --restart=on-failure:5 \
            -p 5233:5233 \
+           -w /usr/local/wxwork-webhook/
            IMAGE_NAME:TAG \
+           python \
+           app.py \
            --wxwork-webhook https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxxxxx \
            --listen 0.0.0.0 \
            --port 5233

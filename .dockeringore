@@ -2,7 +2,6 @@
 *.egg-info
 *.ini
 *.py[cod]
-
 *.so
 *.yaml
 *.yml
