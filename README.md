@@ -7,8 +7,10 @@ alertmanager webhook for wechat
 docker build -t IMAGE_NAME:TAG .
 ```
 
-
 # quick start
+
+## run wxwork-webhook in docker
+
 ```bash
 docker run -d \
            --restart=on-failure:5 \
@@ -22,7 +24,27 @@ docker run -d \
            --port 5233
 ```
 
+## config alertmanager configuration yaml
+
+> add receivers and route receiver
+
+```yaml
+global:
+  ...
+receivers:
+- name: "null"
+- name: "wxwork-webhook"
+  webhook_configs:
+    - send_resolved: true
+      url: "http://<YOUR wxwork-webhook IP address>:5233/webhook"
+route:
+  ...
+  receiver: "wxwork-webhook"
+  ...
+```
+
 # alertmanager webhook json payload
+
 ```json
 {
   "receiver":"wxwork",
